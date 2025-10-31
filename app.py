@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import tempfile, os
 
 from biostats.data_loader import load_table
 from biostats.typing import infer_types
@@ -14,7 +13,6 @@ from biostats.tests import (
     correlation, linear_regression, logistic_regression
 )
 from biostats.utils import na_summary, coerce_numeric, plotly_template
-from biostats.pdf_report import save_plotly_figure, build_pdf
 
 def display_test_result(test_name, result):
     st.markdown(f"### Resultados para: **{test_name}**")
@@ -101,16 +99,13 @@ defaults = {
     "df": None,
     "categorical": [],
     "numeric": [],
-    "last_plot_fig": None,
-    "last_test_result": None,
-    "last_test_name": None,
 }
 for k, v in defaults.items():
     if k not in st.session_state:
         st.session_state[k] = v
 
 # ---------- Tabs ----------
-tabs = st.tabs(["⬆️ Importar Dados", "🧩 Explorar & Visualizar", "📈 Testes Bioestatísticos", "🧾 Relatório (PDF)"])
+tabs = st.tabs(["⬆️ Importar Dados", "🧩 Explorar & Visualizar", "📈 Testes Bioestatísticos"])
 
 # ============ TAB 1: Importar Dados ============
 with tabs[0]:
@@ -213,7 +208,6 @@ with tabs[1]:
 
         if fig is not None:
             st.plotly_chart(fig, use_container_width=True)
-            st.session_state.last_plot_fig = fig  # save for PDF
 
 # ============ TAB 3: Testes Bioestatísticos ============
 with tabs[2]:
@@ -374,65 +368,7 @@ with tabs[2]:
                         st.error(str(e))
 
         if res is not None:
-            st.session_state.last_test_result = res
-            st.session_state.last_test_name = test
-
-# ============ TAB 4: PDF ============
-with tabs[3]:
-    st.subheader("🧾 Relatório (PDF)")
-    if st.session_state.df is None:
-        st.warning("Importe um arquivo na aba **Importar Dados** e gere pelo menos um gráfico ou estatística.")
-    else:
-        df = st.session_state.df
-        cats = st.session_state.categorical
-        nums = [c for c in st.session_state.numeric if pd.api.types.is_numeric_dtype(df[c])]
-
-        st.write("Este relatório inclui:")
-        st.markdown("- Sumário geral (linhas, colunas, #cat, #num)\n- Estatísticas descritivas numéricas\n- Tabela de faltantes\n- **Último gráfico** gerado\n- **Último teste** executado (com resultados)")
-
-        # Preparar dados para PDF
-        desc = describe_numeric(df, nums)
-        na = na_summary(df)
-
-        # Selecionar último gráfico
-        fig = st.session_state.last_plot_fig
-
-        # Botão gerar PDF
-        if st.button("Gerar PDF", type="primary"):
-            with tempfile.TemporaryDirectory() as td:
-                plot_path = None
-                if fig is not None:
-                    plot_path = os.path.join(td, "grafico.png")
-                    try:
-                        save_plotly_figure(fig, plot_path)
-                    except Exception as e:
-                        plot_path = None
-                        st.warning(f"Não foi possível exportar o gráfico (kaleido ausente?): {e}")
-
-                # Tabelas em CSV (texto) para incorporar
-                stats_tables = {
-                    "Descritivas numéricas (CSV)": desc.to_csv(index=True),
-                    "Valores faltantes (CSV)": na.to_csv(index=False)
-                }
-
-                output_pdf = os.path.join(td, "BioStats_Render_relatorio.pdf")
-                summary_text = f"""Linhas: {df.shape[0]}
-Colunas: {df.shape[1]}
-Categóricas: {len(cats)}
-Numéricas: {len(nums)}
-"""
-
-                build_pdf(
-                    output_path=output_pdf,
-                    title="BioStats Render — Relatório",
-                    summary_text=summary_text,
-                    stats_tables=stats_tables,
-                    plot_path=plot_path,
-                    test_result=st.session_state.last_test_result
-                )
-
-                with open(output_pdf, "rb") as f:
-                    st.download_button("⬇️ Baixar PDF", f, file_name="BioStats_Render_relatorio.pdf", mime="application/pdf")
+            display_test_result(test, res)
 
 st.markdown("---")
 st.markdown("**BioStats Render v2.1** — © Desenvolvido por **Dr Fernando Freua**.")
