@@ -11,7 +11,10 @@ source .venv/bin/activate
 pip install -r requirements.txt
 streamlit run app.py
 ```
-Verifique Plotly Chrome instalado: $ plotly_get_chrome (no terminal)
+Verifique Plotly Chrome instalado: 
+```bash
+$ plotly_get_chrome (no terminal)
+```
 
 ## Observações
 - Para exportar gráficos ao PDF, usamos o `kaleido` (instalado via requirements).
