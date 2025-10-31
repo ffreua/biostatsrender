@@ -23,9 +23,9 @@ def build_pdf(output_path: str,
         pdf = FPDF(orientation="P", unit="mm", format="A4")
         pdf.set_auto_page_break(auto=True, margin=12)
         pdf.add_page()
-        pdf.set_font("Helvetica", "B", 16)
+        pdf.set_font("Arial", "B", 16)
         pdf.cell(0, 10, title, ln=1)
-        pdf.set_font("Helvetica", "", 10)
+        pdf.set_font("Arial", "", 10)
         pdf.set_text_color(100,100,100)
         pdf.cell(0, 6, f"Geração: {datetime.datetime.now().strftime('%d/%m/%Y %H:%M')}", ln=1)
         pdf.set_text_color(0,0,0)
@@ -35,9 +35,9 @@ def build_pdf(output_path: str,
 
     # Resumo
     try:
-        pdf.set_font("Helvetica", "B", 12)
+        pdf.set_font("Arial", "B", 12)
         pdf.cell(0, 8, "Resumo", ln=1)
-        pdf.set_font("Helvetica", "", 10)
+        pdf.set_font("Arial", "", 10)
         for line in summary_text.splitlines():
             pdf.multi_cell(0, 5, line)
         pdf.ln(2)
@@ -47,7 +47,7 @@ def build_pdf(output_path: str,
     # Gráfico
     if plot_path and os.path.exists(plot_path):
         try:
-            pdf.set_font("Helvetica", "B", 12)
+            pdf.set_font("Arial", "B", 12)
             pdf.cell(0, 8, "Gráfico", ln=1)
             pdf.image(plot_path, w=170)
             pdf.ln(4)
@@ -58,9 +58,9 @@ def build_pdf(output_path: str,
     if stats_tables:
         for name, csv_text in stats_tables.items():
             try:
-                pdf.set_font("Helvetica", "B", 12)
+                pdf.set_font("Arial", "B", 12)
                 pdf.cell(0, 8, name, ln=1)
-                pdf.set_font("Helvetica", "", 8)
+                pdf.set_font("Arial", "", 8)
                 for ln in csv_text.strip().splitlines():
                     pdf.multi_cell(0, 4, ln)
                 pdf.ln(2)
@@ -70,9 +70,9 @@ def build_pdf(output_path: str,
     # Teste
     if test_result:
         try:
-            pdf.set_font("Helvetica", "B", 12)
+            pdf.set_font("Arial", "B", 12)
             pdf.cell(0, 8, "Último teste executado", ln=1)
-            pdf.set_font("Helvetica", "", 9)
+            pdf.set_font("Arial", "", 9)
             try:
                 pretty = json.dumps(test_result, ensure_ascii=False, indent=2)
             except Exception:
