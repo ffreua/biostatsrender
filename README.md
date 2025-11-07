@@ -1,4 +1,4 @@
-# BioStats Render v2.2
+# BioStats Render v2.1
 
 ## Rodando
 ```bash
@@ -13,4 +13,5 @@ streamlit run app.py
 ```
 
 ## Observações
-- Ajude a verificar erros e reporte
+- Para exportar gráficos ao PDF, usamos o `kaleido` (instalado via requirements).
+- O PDF é gerado a partir do conteúdo em memória (estatísticas + último gráfico gerado + último teste realizado).

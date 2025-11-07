@@ -367,8 +367,9 @@ with tabs[2]:
                     except Exception as e:
                         st.error(str(e))
 
-        if res is not None:
-            display_test_result(test, res)
+        # Removido para evitar duplicidade na exibição dos resultados dos testes estatísticos
+        # if res is not None:
+        #     display_test_result(test, res)
 
 st.markdown("---")
 st.markdown("**BioStats Render v2.1** — © Desenvolvido por **Dr Fernando Freua**.")

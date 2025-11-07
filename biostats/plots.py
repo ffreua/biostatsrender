@@ -15,7 +15,13 @@ def violin(df: pd.DataFrame, x: str | None, y: str, color: str | None = None, po
     return px.violin(df, x=x, y=y, color=color, box=True, points=points, title=f"Violin: {y}" + (f" por {x}" if x else ""), template=template)
 
 def bar_count(df: pd.DataFrame, x: str, color: str | None = None, template: str = "plotly"):
-    # Contar valores primeiro, depois criar gráfico de barras
-    counts = df[x].value_counts().reset_index()
-    counts.columns = [x, 'count']
-    return px.bar(counts, x=x, y='count', color=color, title=f"Contagem: {x}", template=template)
+    if color == x:
+        color = None
+    if color is None:
+        counts = df[x].value_counts().reset_index()
+        counts.columns = [x, 'count']
+        return px.bar(counts, x=x, y='count', title=f"Contagem: {x}", template=template)
+    else:
+        counts = df.groupby([x, color]).size().to_frame('_temp_agg_count_').reset_index()
+        counts = counts.rename(columns={'_temp_agg_count_': 'count'})
+        return px.bar(counts, x=x, y='count', color=color, title=f"Contagem: {x} por {color}", template=template)
