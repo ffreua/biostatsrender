@@ -13,5 +13,5 @@ streamlit run app.py
 ```
 
 ## Observações
-- Para exportar gráficos ao PDF, usamos o `kaleido` (instalado via requirements).
-- O PDF é gerado a partir do conteúdo em memória (estatísticas + último gráfico gerado + último teste realizado).
+- Removido exportação de grafico por PDF
+- Exportação de graficos pelo próprio grafico.
